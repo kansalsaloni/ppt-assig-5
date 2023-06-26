@@ -1,0 +1,443 @@
+Question 1>
+Convert 1D Array Into 2D Array
+You are given a **0-indexed** 1-dimensional (1D) integer array original, and two integers, m and n. You are tasked with creating a 2-dimensional (2D) array with  m rows and n columns using **all** the elements from original.
+The elements from indices 0 to n - 1 (**inclusive**) of original should form the first row of the constructed 2D array, the elements from indices n to 2 * n - 1 (**inclusive**) should form the second row of the constructed 2D array, and so on.
+Return *an* m x n *2D array constructed according to the above procedure, or an empty 2D array if it is impossible*.
+
+SOLUTION=>
+
+#include <iostream>
+#include <vector>
+
+std::vector<std::vector<int>> convertTo2DArray(const std::vector<int>& original, int m, int n) {
+    int totalElements = m * n;
+    if (original.size() != totalElements) {
+        return {}; // Return an empty 2D array if the number of elements is not equal to m * n
+    }
+
+    std::vector<std::vector<int>> result(m, std::vector<int>(n));
+
+    for (int i = 0; i < totalElements; ++i) {
+        int row = i / n;
+        int col = i % n;
+        result[row][col] = original[i];
+    }
+
+    return result;
+}
+
+int main() {
+    int m, n;
+    std::cout << "Enter the number of rows (m): ";
+    std::cin >> m;
+    std::cout << "Enter the number of columns (n): ";
+    std::cin >> n;
+
+    int totalElements = m * n;
+    std::vector<int> original(totalElements);
+    std::cout << "Enter the elements of the 1D array: ";
+    for (int i = 0; i < totalElements; ++i) {
+        std::cin >> original[i];
+    }
+
+    std::vector<std::vector<int>> result = convertTo2DArray(original, m, n);
+
+    if (result.empty()) {
+        std::cout << "It is not possible to create the 2D array." << std::endl;
+    } else {
+        std::cout << "The 2D array is:" << std::endl;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                std::cout << result[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    return 0;
+}
+
+
+Input:original = [1,2,3,4], m = 2, n = 2
+Output: [[1,2],[3,4]]
+
+########################################################################################################
+
+QUESTION 2=>
+You have n coins and you want to build a staircase with these coins. The staircase consists of k rows where the ith row has exactly i coins. The last row of the staircase **may be** incomplete.
+Given the integer n, return *the number of **complete rows** of the staircase you will build*.
+
+SOLUTION=>
+
+#include <iostream>
+#include <cmath>
+
+int countCompleteRows(int n) {
+    int k = static_cast<int>(std::sqrt(2 * n)); // Find the largest integer less than or equal to the square root of (2 * n)
+    while ((k * (k + 1)) / 2 > n) {
+        k--; // Adjust k if the sum is greater than n
+    }
+    return k;
+}
+
+int main() {
+    int n;
+    std::cout << "Enter the number of coins (n): ";
+    std::cin >> n;
+
+    int completeRows = countCompleteRows(n);
+
+    std::cout << "Number of complete rows: " << completeRows << std::endl;
+
+    return 0;
+}
+
+Input:** n = 5
+Output:** 2
+
+#######################################################################################################
+QUESTION=>
+Given an integer array nums sorted in non-decreasing order, return an array of the squares of each number sorted in non-decreasing order.
+
+SOLUTION=>
+
+#include <iostream>
+#include <vector>
+
+std::vector<int> sortedSquares(std::vector<int>& nums) {
+    int n = nums.size();
+    std::vector<int> result(n);
+
+    int left = 0;
+    int right = n - 1;
+
+    for (int i = n - 1; i >= 0; i--) {
+        int squareLeft = nums[left] * nums[left];
+        int squareRight = nums[right] * nums[right];
+
+        if (squareLeft >= squareRight) {
+            result[i] = squareLeft;
+            left++;
+        } else {
+            result[i] = squareRight;
+            right--;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    std::vector<int> nums;
+    int num;
+
+    std::cout << "Enter the elements of the array in non-decreasing order (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        nums.push_back(num);
+    }
+
+    std::vector<int> result = sortedSquares(nums);
+
+    std::cout << "Squared array in non-decreasing order: ";
+    for (int num : result) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+
+Input:** nums = [-4,-1,0,3,10]
+Output:** [0,1,9,16,100]
+
+#######################################################################################################
+QUESTION=>
+Given two **0-indexed** integer arrays nums1 and nums2, return *a list* answer *of size* 2 *where:*
+
+- answer[0] *is a list of all **distinct** integers in* nums1 *which are **not** present in* nums2*.*
+- answer[1] *is a list of all **distinct** integers in* nums2 *which are **not** present in* nums1.
+
+SOLUTION=>
+
+#include <iostream>
+#include <unordered_set>
+#include <vector>
+
+std::vector<std::vector<int>> findMissingNumbers(std::vector<int>& nums1, std::vector<int>& nums2) {
+    std::unordered_set<int> set1(nums1.begin(), nums1.end());
+    std::unordered_set<int> set2(nums2.begin(), nums2.end());
+
+    std::vector<int> missing1, missing2;
+
+    for (int num : nums1) {
+        if (set2.find(num) == set2.end()) {
+            missing1.push_back(num);
+        }
+    }
+
+    for (int num : nums2) {
+        if (set1.find(num) == set1.end()) {
+            missing2.push_back(num);
+        }
+    }
+
+    return {missing1, missing2};
+}
+
+int main() {
+    std::vector<int> nums1, nums2;
+    int num;
+
+    std::cout << "Enter the elements of nums1 (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        nums1.push_back(num);
+    }
+
+    std::cout << "Enter the elements of nums2 (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        nums2.push_back(num);
+    }
+
+    std::vector<std::vector<int>> missingNumbers = findMissingNumbers(nums1, nums2);
+
+    std::cout << "Distinct integers in nums1 not present in nums2: ";
+    for (int num : missingNumbers[0]) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Distinct integers in nums2 not present in nums1: ";
+    for (int num : missingNumbers[1]) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+
+Input:nums1 = [1,2,3], nums2 = [2,4,6]
+Output:[[1,3],[4,6]]
+
+#######################################################################################################
+QUESTION=>
+Given two integer arrays arr1 and arr2, and the integer d, *return the distance value between the two arrays*.
+
+The distance value is defined as the number of elements arr1[i] such that there is not any element arr2[j] where |arr1[i]-arr2[j]| <= d.
+
+SOLUTION=>
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+int distanceValue(std::vector<int>& arr1, std::vector<int>& arr2, int d) {
+    int distance = 0;
+
+    for (int num1 : arr1) {
+        bool found = false;
+        for (int num2 : arr2) {
+            if (std::abs(num1 - num2) <= d) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            distance++;
+        }
+    }
+
+    return distance;
+}
+
+int main() {
+    std::vector<int> arr1, arr2;
+    int num, d;
+
+    std::cout << "Enter the elements of arr1 (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        arr1.push_back(num);
+    }
+
+    std::cout << "Enter the elements of arr2 (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        arr2.push_back(num);
+    }
+
+    std::cout << "Enter the value of d: ";
+    std::cin >> d;
+
+    int distance = distanceValue(arr1, arr2, d);
+
+    std::cout << "Distance value: " << distance << std::endl;
+
+    return 0;
+}
+
+Input:arr1 = [4,5,8], arr2 = [10,9,1,8], d = 2
+Output:2
+#######################################################################################################
+QUESTION=>
+Given an integer array nums of length n where all the integers of nums are in the range [1, n] and each integer appears **once** or **twice**, return *an array of all the integers that appears **twice***.
+
+You must write an algorithm that runs in O(n) time and uses only constant extra space.
+
+SOLUTION=>
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+std::vector<int> findDuplicates(std::vector<int>& nums) {
+    std::vector<int> duplicates;
+
+    for (int i = 0; i < nums.size(); i++) {
+        int index = abs(nums[i]) - 1;
+
+        if (nums[index] < 0) {
+            duplicates.push_back(index + 1);
+        } else {
+            nums[index] = -nums[index];
+        }
+    }
+
+    return duplicates;
+}
+
+int main() {
+    std::vector<int> nums;
+    int num;
+
+    std::cout << "Enter the elements of the array (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        nums.push_back(num);
+    }
+
+    std::vector<int> duplicates = findDuplicates(nums);
+
+    std::cout << "Integers that appear twice: ";
+    for (int num : duplicates) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+
+Input:nums = [4,3,2,7,8,2,3,1]
+Output:[2,3]
+#######################################################################################################
+QUESTION=>
+Suppose an array of length n sorted in ascending order is **rotated** between 1 and n times. For example, the array nums = [0,1,2,4,5,6,7] might become:
+
+- [4,5,6,7,0,1,2] if it was rotated 4 times.
+- [0,1,2,4,5,6,7] if it was rotated 7 times.
+
+Notice that **rotating** an array [a[0], a[1], a[2], ..., a[n-1]] 1 time results in the array [a[n-1], a[0], a[1], a[2], ..., a[n-2]].
+
+Given the sorted rotated array nums of **unique** elements, return *the minimum element of this array*.
+
+You must write an algorithm that runs in O(log n) time.
+
+SOLUTION=>
+
+#include <iostream>
+#include <vector>
+
+int findMin(std::vector<int>& nums) {
+    int left = 0;
+    int right = nums.size() - 1;
+
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+
+        if (nums[mid] > nums[right]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return nums[left];
+}
+
+int main() {
+    std::vector<int> nums;
+    int num;
+
+    std::cout << "Enter the elements of the rotated array (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        nums.push_back(num);
+    }
+
+    int minElement = findMin(nums);
+
+    std::cout << "Minimum element: " << minElement << std::endl;
+
+    return 0;
+}
+
+Input:  nums = [3,4,5,1,2]
+Output:  1
+#######################################################################################################
+QUESTION=>
+n integer array original is transformed into a **doubled** array changed by appending **twice the value** of every element in original, and then randomly **shuffling** the resulting array.
+
+Given an array changed, return original *if* changed *is a **doubled** array. If* changed *is not a **doubled** array, return an empty array. The elements in* original *may be returned in **any** order*.
+
+SOLUTION=>
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+std::vector<int> findOriginalArray(std::vector<int>& changed) {
+    std::unordered_map<int, int> countMap;
+    
+    // Step 1: Count the occurrence of each element in changed
+    for (int num : changed) {
+        countMap[num]++;
+    }
+
+    std::vector<int> original;
+
+    // Step 2 and 3: Check if changed is a doubled array
+    for (int num : changed) {
+        if (countMap[num] > 0) {
+            if (countMap[2 * num] <= 0) {
+                return {}; // Not a doubled array, return empty array
+            }
+            original.push_back(num);
+            countMap[num]--;
+            countMap[2 * num]--;
+        }
+    }
+
+    return original;
+}
+
+int main() {
+    std::vector<int> changed;
+    int num;
+
+    std::cout << "Enter the elements of the changed array (press -1 to stop): ";
+    while (std::cin >> num && num != -1) {
+        changed.push_back(num);
+    }
+
+    std::vector<int> original = findOriginalArray(changed);
+
+    if (original.empty()) {
+        std::cout << "No valid original array exists." << std::endl;
+    } else {
+        std::cout << "Original array: ";
+        for (int num : original) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    return 0;
+}
+
+
+Input: changed = [1,3,4,2,6,8]
+Output:  [1,3,4]
